@@ -1,0 +1,455 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Giriş Yap / Kayıt Ol - Otoada</title>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        body {
+            scroll-behavior: smooth;
+            background-color: #0a0a0a;
+        }
+        
+        .gold-text {
+            color: #ffd700;
+        }
+        
+        .form-input:focus {
+            outline: none;
+            box-shadow: 0 0 0 2px rgba(255, 215, 0, 0.5);
+            border-color: #ffd700;
+        }
+        
+        .tab-button {
+            transition: all 0.3s ease;
+        }
+        
+        .tab-button.active {
+            color: #ffd700;
+            border-bottom: 2px solid #ffd700;
+        }
+        
+        .car-image-bg {
+            background: linear-gradient(135deg, #1a1a1a 0%, #2d2d2d 50%, #1a1a1a 100%);
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .car-image-bg::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: linear-gradient(
+                45deg,
+                transparent 30%,
+                rgba(255, 215, 0, 0.1) 50%,
+                transparent 70%
+            );
+            animation: shine 3s infinite;
+        }
+        
+        @keyframes shine {
+            0% { transform: translateX(-100%) translateY(-100%) rotate(45deg); }
+            100% { transform: translateX(100%) translateY(100%) rotate(45deg); }
+        }
+    </style>
+</head>
+<body class="bg-black text-gray-100 min-h-screen">
+    <!-- Navbar -->
+    <nav class="bg-black border-b border-gray-900">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between items-center h-16">
+                <div class="flex-shrink-0 flex items-center gap-3">
+                    <a href="index.html" class="text-2xl font-bold gold-text tracking-tight">otoada.com</a>
+                    <span class="text-xs md:text-sm text-gray-400 italic font-light">Al sat fark yarat</span>
+                </div>
+                <a href="index.html" class="text-gray-300 hover:text-white transition-colors duration-200 font-medium">
+                    ← Ana Sayfaya Dön
+                </a>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Split Screen Layout -->
+    <div class="min-h-screen flex flex-col md:flex-row">
+        <!-- Left Side - Car Image -->
+        <div class="hidden md:flex md:w-1/2 car-image-bg items-center justify-center relative">
+            <div class="absolute inset-0 flex items-center justify-center z-10">
+                <svg class="w-64 h-64 text-gray-700" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M8 7h12m0 0l-4-4m4 4l-4 4m0 6H4m0 0l4 4m-4-4l4-4" />
+                </svg>
+            </div>
+            <div class="absolute bottom-10 left-10 right-10 z-20">
+                <h2 class="text-3xl font-bold text-white mb-2">Otoada'ya Hoş Geldiniz</h2>
+                <p class="text-gray-300">Premium araç pazarınız</p>
+            </div>
+        </div>
+
+        <!-- Right Side - Login/Signup Form -->
+        <div class="w-full md:w-1/2 flex items-center justify-center p-8 bg-black">
+            <div class="w-full max-w-md">
+                <!-- Logo for mobile -->
+                <div class="md:hidden text-center mb-8">
+                    <h1 class="text-3xl font-bold gold-text mb-2">otoada.com</h1>
+                    <p class="text-sm text-gray-400 italic">Al sat fark yarat</p>
+                </div>
+
+                <!-- Tabs -->
+                <div class="flex space-x-6 mb-8 border-b border-gray-800">
+                    <button onclick="switchTab('login')" id="login-tab" class="tab-button active pb-4 px-2 text-lg font-medium text-gray-400">
+                        Giriş Yap
+                    </button>
+                    <button onclick="switchTab('signup')" id="signup-tab" class="tab-button pb-4 px-2 text-lg font-medium text-gray-400">
+                        Kayıt Ol
+                    </button>
+                </div>
+
+                <!-- Login Form -->
+                <form id="login-form" class="space-y-5">
+                    <div>
+                        <label class="block text-sm font-medium text-gray-400 mb-2">E-posta</label>
+                        <input 
+                            type="email" 
+                            placeholder="E-posta adresinizi girin" 
+                            required
+                            class="w-full px-4 py-3 rounded-lg bg-gray-900 text-white placeholder-gray-500 border border-gray-800 form-input transition-all duration-200"
+                        >
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-400 mb-2">Şifre</label>
+                        <input 
+                            type="password" 
+                            placeholder="Şifrenizi girin" 
+                            required
+                            class="w-full px-4 py-3 rounded-lg bg-gray-900 text-white placeholder-gray-500 border border-gray-800 form-input transition-all duration-200"
+                        >
+                    </div>
+                    <div class="flex items-center justify-between">
+                        <label class="flex items-center">
+                            <input type="checkbox" class="rounded bg-gray-900 border-gray-800 text-yellow-500 focus:ring-yellow-500">
+                            <span class="ml-2 text-sm text-gray-400">Beni Hatırla</span>
+                        </label>
+                        <a href="#" class="text-sm text-yellow-500 hover:text-yellow-400">Şifrenizi mi unuttunuz?</a>
+                    </div>
+                    <button 
+                        type="submit" 
+                        class="w-full bg-yellow-500 hover:bg-yellow-600 text-black py-3 rounded-lg font-semibold text-lg transition-colors duration-200"
+                    >
+                        Giriş Yap
+                    </button>
+                </form>
+
+                <!-- Signup Form -->
+                <form id="signup-form" class="space-y-5 hidden">
+                    <!-- Account Type Selection -->
+                    <div>
+                        <label class="block text-sm font-medium text-gray-400 mb-3">Hesap Tipi</label>
+                        <div class="flex gap-4">
+                            <label class="flex-1 cursor-pointer account-type-option" data-value="member">
+                                <input 
+                                    type="radio" 
+                                    name="account-type" 
+                                    value="member" 
+                                    checked
+                                    class="sr-only"
+                                >
+                                <div class="w-full px-4 py-3 rounded-lg bg-gray-900 border-2 border-yellow-500 text-yellow-400 text-center font-medium transition-all duration-200 hover:border-yellow-400 account-type-label">
+                                    Bireysel
+                                </div>
+                            </label>
+                            <label class="flex-1 cursor-pointer account-type-option" data-value="gallery">
+                                <input 
+                                    type="radio" 
+                                    name="account-type" 
+                                    value="gallery" 
+                                    class="sr-only"
+                                >
+                                <div class="w-full px-4 py-3 rounded-lg bg-gray-900 border-2 border-gray-800 text-gray-300 text-center font-medium transition-all duration-200 hover:border-gray-700 account-type-label">
+                                    Kurumsal
+                                </div>
+                            </label>
+                        </div>
+                    </div>
+                    <!-- Gallery Name Field (Hidden by default, shown for Corporate accounts) -->
+                    <div id="gallery-name-container" class="hidden">
+                        <label class="block text-sm font-medium text-gray-400 mb-2">Galeri Adı</label>
+                        <input 
+                            type="text" 
+                            id="signup-gallery-name"
+                            placeholder="Galeri adınızı girin" 
+                            class="w-full px-4 py-3 rounded-lg bg-gray-900 text-white placeholder-gray-500 border border-gray-800 form-input transition-all duration-200"
+                        >
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-400 mb-2">Ad</label>
+                        <input 
+                            type="text" 
+                            id="signup-name"
+                            placeholder="Ad Soyad" 
+                            required
+                            class="w-full px-4 py-3 rounded-lg bg-gray-900 text-white placeholder-gray-500 border border-gray-800 form-input transition-all duration-200"
+                        >
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-400 mb-2">Telefon</label>
+                        <input 
+                            type="tel" 
+                            id="signup-phone"
+                            placeholder="+90 5XX XXX XX XX" 
+                            class="w-full px-4 py-3 rounded-lg bg-gray-900 text-white placeholder-gray-500 border border-gray-800 form-input transition-all duration-200"
+                        >
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-400 mb-2">E-posta</label>
+                        <input 
+                            type="email" 
+                            id="signup-email"
+                            placeholder="E-posta adresinizi girin" 
+                            required
+                            class="w-full px-4 py-3 rounded-lg bg-gray-900 text-white placeholder-gray-500 border border-gray-800 form-input transition-all duration-200"
+                        >
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-400 mb-2">Şifre</label>
+                        <input 
+                            type="password" 
+                            id="signup-password"
+                            placeholder="Şifrenizi girin" 
+                            required
+                            class="w-full px-4 py-3 rounded-lg bg-gray-900 text-white placeholder-gray-500 border border-gray-800 form-input transition-all duration-200"
+                        >
+                    </div>
+                    <div>
+                        <label class="flex items-center">
+                            <input type="checkbox" class="rounded bg-gray-900 border-gray-800 text-yellow-500 focus:ring-yellow-500" required>
+                            <span class="ml-2 text-sm text-gray-400"><a href="#" class="text-yellow-500 hover:text-yellow-400">Şartlar ve Koşullar</a>'ı kabul ediyorum</span>
+                        </label>
+                    </div>
+                    <button 
+                        type="submit" 
+                        class="w-full bg-yellow-500 hover:bg-yellow-600 text-black py-3 rounded-lg font-semibold text-lg transition-colors duration-200"
+                    >
+                        Kayıt Ol
+                    </button>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <script src="config.js"></script>
+    <script>
+        // Handle account type radio button styling and gallery name field toggle
+        document.addEventListener('DOMContentLoaded', function() {
+            const accountTypeRadios = document.querySelectorAll('input[name="account-type"]');
+            const galleryNameContainer = document.getElementById('gallery-name-container');
+            const galleryNameInput = document.getElementById('signup-gallery-name');
+            
+            function updateRadioStyles() {
+                accountTypeRadios.forEach(radio => {
+                    const label = radio.closest('label.account-type-option');
+                    const labelDiv = label ? label.querySelector('.account-type-label') : null;
+                    
+                    if (labelDiv) {
+                        if (radio.checked) {
+                            labelDiv.classList.remove('border-gray-800', 'text-gray-300');
+                            labelDiv.classList.add('border-yellow-500', 'bg-yellow-500', 'bg-opacity-10', 'text-yellow-400');
+                        } else {
+                            labelDiv.classList.remove('border-yellow-500', 'bg-yellow-500', 'bg-opacity-10', 'text-yellow-400');
+                            labelDiv.classList.add('border-gray-800', 'text-gray-300');
+                        }
+                    }
+                });
+            }
+            
+            function toggleGalleryNameField() {
+                const selectedAccountType = document.querySelector('input[name="account-type"]:checked');
+                const isGallery = selectedAccountType && selectedAccountType.value === 'gallery';
+                
+                if (isGallery) {
+                    // Show gallery name field and make it required
+                    if (galleryNameContainer) {
+                        galleryNameContainer.classList.remove('hidden');
+                    }
+                    if (galleryNameInput) {
+                        galleryNameInput.required = true;
+                    }
+                } else {
+                    // Hide gallery name field and make it not required
+                    if (galleryNameContainer) {
+                        galleryNameContainer.classList.add('hidden');
+                    }
+                    if (galleryNameInput) {
+                        galleryNameInput.required = false;
+                        galleryNameInput.value = ''; // Clear the value when hidden
+                    }
+                }
+            }
+            
+            // Add change listeners
+            accountTypeRadios.forEach(radio => {
+                radio.addEventListener('change', function() {
+                    updateRadioStyles();
+                    toggleGalleryNameField();
+                });
+            });
+            
+            // Set initial state
+            updateRadioStyles();
+            toggleGalleryNameField();
+        });
+
+        function switchTab(tab) {
+            const loginTab = document.getElementById('login-tab');
+            const signupTab = document.getElementById('signup-tab');
+            const loginForm = document.getElementById('login-form');
+            const signupForm = document.getElementById('signup-form');
+
+            if (tab === 'login') {
+                loginTab.classList.add('active');
+                signupTab.classList.remove('active');
+                loginForm.classList.remove('hidden');
+                signupForm.classList.add('hidden');
+            } else {
+                signupTab.classList.add('active');
+                loginTab.classList.remove('active');
+                signupForm.classList.remove('hidden');
+                loginForm.classList.add('hidden');
+            }
+        }
+
+        // Login form submission
+        document.getElementById('login-form').addEventListener('submit', async function(e) {
+            e.preventDefault();
+            const form = e.target;
+            const email = form.querySelector('input[type="email"]').value.trim();
+            const password = form.querySelector('input[type="password"]').value.trim();
+            const submitButton = form.querySelector('button[type="submit"]');
+            const originalButtonText = submitButton.textContent;
+
+            if (!supabase) {
+                alert('Supabase yapılandırması eksik.');
+                return;
+            }
+
+            try {
+                submitButton.disabled = true;
+                submitButton.textContent = 'Giriş yapılıyor...';
+
+                const { data, error } = await supabase.auth.signInWithPassword({
+                    email: email,
+                    password: password
+                });
+
+                if (error) throw error;
+
+                // Redirect to admin panel or index based on user preference
+                window.location.href = 'admin.html';
+
+            } catch (error) {
+                console.error('Login error:', error);
+                alert('Giriş başarısız: ' + (error.message || 'Lütfen e-posta ve şifrenizi kontrol edin.'));
+                submitButton.disabled = false;
+                submitButton.textContent = originalButtonText;
+            }
+        });
+
+        // Signup form submission
+        document.getElementById('signup-form').addEventListener('submit', async function(e) {
+            e.preventDefault();
+            const form = e.target;
+            const nameInput = document.getElementById('signup-name');
+            const phoneInput = document.getElementById('signup-phone');
+            const emailInput = document.getElementById('signup-email');
+            const passwordInput = document.getElementById('signup-password');
+            const galleryNameInput = document.getElementById('signup-gallery-name');
+            const accountTypeInput = form.querySelector('input[name="account-type"]:checked');
+            const submitButton = form.querySelector('button[type="submit"]');
+
+            const fullName = nameInput.value.trim();
+            const whatsapp = phoneInput.value.trim() || null;
+            const email = emailInput.value.trim();
+            const password = passwordInput.value.trim();
+            const accountType = accountTypeInput ? accountTypeInput.value : 'member';
+            
+            // Get gallery name - only if input exists and has a value
+            const galleryNameRaw = galleryNameInput ? galleryNameInput.value.trim() : '';
+            const galleryName = galleryNameRaw && galleryNameRaw.length > 0 ? galleryNameRaw : null;
+            
+            // Validation: If corporate account, gallery name is required
+            if (accountType === 'gallery' && !galleryName) {
+                alert('Kurumsal hesap için galeri adı gereklidir.');
+                if (galleryNameInput) {
+                    galleryNameInput.focus();
+                }
+                return;
+            }
+            
+            const originalButtonText = submitButton.textContent;
+
+            if (!supabase) {
+                alert('Supabase yapılandırması eksik.');
+                return;
+            }
+
+            try {
+                submitButton.disabled = true;
+                submitButton.textContent = 'Kayıt yapılıyor...';
+
+                // Sign up user with Supabase Auth
+                // User metadata (full_name, whatsapp, role, gallery_name) is passed in options.data
+                // SQL Trigger will automatically create the profile row
+                // IMPORTANT: Use snake_case keys to match SQL column names
+                const signupData = {
+                    full_name: fullName,
+                    whatsapp: whatsapp,
+                    role: accountType
+                };
+                
+                // Only include gallery_name if it's provided (for corporate accounts)
+                // Use snake_case 'gallery_name' to match database column
+                if (galleryName) {
+                    signupData.gallery_name = galleryName;
+                }
+                
+                // Debug: Log the data being sent (remove in production)
+                console.log('Signup data being sent:', JSON.stringify(signupData, null, 2));
+                
+                const { data: authData, error: authError } = await supabase.auth.signUp({
+                    email: email,
+                    password: password,
+                    options: {
+                        data: signupData
+                    }
+                });
+
+                if (authError) throw authError;
+
+                if (!authData.user) {
+                    throw new Error('Kullanıcı oluşturulamadı.');
+                }
+
+                // Success - SQL Trigger handles profile creation automatically
+                alert('Kayıt Başarılı!');
+                
+                // Clear form
+                form.reset();
+                
+                // Switch to login tab
+                switchTab('login');
+
+            } catch (error) {
+                console.error('Signup error:', error);
+                alert('Kayıt başarısız: ' + (error.message || 'Lütfen bilgilerinizi kontrol edin.'));
+                submitButton.disabled = false;
+                submitButton.textContent = originalButtonText;
+            }
+        });
+    </script>
+</body>
+</html>
+

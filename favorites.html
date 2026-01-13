@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Favori İlanlarım - Otoada</title>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        body {
+            scroll-behavior: smooth;
+            background-color: #0a0a0a;
+        }
+        
+        .navbar-glass {
+            background-color: rgba(10, 10, 10, 0.7);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        
+        .navbar-glass.scrolled {
+            background-color: rgba(10, 10, 10, 0.85);
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.3);
+        }
+        
+        .car-card {
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            background: linear-gradient(135deg, #1a1a1a 0%, #0f0f0f 100%);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            text-decoration: none;
+            color: inherit;
+        }
+        
+        .car-card:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 20px 40px rgba(255, 215, 0, 0.2);
+            border-color: rgba(255, 215, 0, 0.3);
+        }
+        
+        .gold-text {
+            color: #ffd700;
+        }
+        
+        .car-image-placeholder {
+            background: linear-gradient(135deg, #1a1a1a 0%, #2d2d2d 50%, #1a1a1a 100%);
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .favorite-heart {
+            transition: all 0.3s ease;
+            cursor: pointer;
+            z-index: 10;
+        }
+        
+        .favorite-heart:hover {
+            transform: scale(1.1);
+        }
+    </style>
+</head>
+<body class="bg-black text-gray-100">
+    <!-- Navbar -->
+    <nav id="navbar" class="fixed top-0 left-0 right-0 z-[100] navbar-glass backdrop-blur-md transition-all duration-300">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between items-center h-16">
+                <div class="flex-shrink-0 flex items-center gap-3">
+                    <a href="index.html" class="text-2xl font-bold gold-text tracking-tight">otoada.com</a>
+                    <span class="text-xs md:text-sm text-gray-400 italic font-light">Al sat fark yarat</span>
+                </div>
+                <div class="hidden md:flex items-center space-x-6">
+                    <a href="index.html#listings" class="text-gray-300 hover:text-white transition-colors duration-200 font-medium">İlanlar</a>
+                    <a href="index.html#contact" class="text-gray-300 hover:text-white transition-colors duration-200 font-medium">İletişim</a>
+                    <a href="favorites.html" class="relative text-gray-300 hover:text-white transition-colors duration-200 font-medium flex items-center gap-2">
+                        <svg class="w-6 h-6" fill="#ef4444" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" />
+                        </svg>
+                        <span id="favorites-badge" class="absolute -top-2 -right-2 bg-red-500 text-white text-xs font-bold rounded-full w-5 h-5 flex items-center justify-center hidden">0</span>
+                        <span class="hidden sm:inline">Favoriler</span>
+                    </a>
+                    <a href="login.html" class="text-gray-300 hover:text-white transition-colors duration-200 font-medium">Giriş Yap / Kayıt Ol</a>
+                    <a href="upload.html" class="px-4 py-2 border-2 border-yellow-500 text-yellow-500 hover:bg-yellow-500 hover:text-black rounded-lg transition-colors duration-200 font-medium">İlan Ekle</a>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <div class="pt-24 pb-12">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <!-- Header -->
+            <div class="text-center mb-12">
+                <h1 class="text-4xl md:text-5xl font-bold text-white mb-3">Favori İlanlarım</h1>
+                <p class="text-gray-400 text-lg">Kaydettiğiniz ilanlar burada görüntülenecektir</p>
+            </div>
+
+            <!-- Favorites Grid -->
+            <div id="favorites-container" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+                <!-- Favorite car cards will be inserted here -->
+                <div class="col-span-full text-center py-12">
+                    <p class="text-gray-400">Yükleniyor...</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Airtable Integration Scripts -->
+    <script src="config.js"></script>
+    <script src="favorites.js"></script>
+</body>
+</html>
+
+
+
+
+
+
+
+
+
+

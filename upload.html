@@ -1,0 +1,457 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>İlan Ver - Otoada</title>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        body {
+            scroll-behavior: smooth;
+            background-color: #0a0a0a;
+        }
+        
+        .gold-text {
+            color: #ffd700;
+        }
+        
+        .form-input:focus {
+            outline: none;
+            box-shadow: 0 0 0 2px rgba(255, 215, 0, 0.5);
+            border-color: #ffd700;
+        }
+        
+        .upload-area {
+            border: 2px dashed rgba(255, 255, 255, 0.2);
+            transition: all 0.3s ease;
+        }
+        
+        .upload-area:hover,
+        .upload-area.dragover {
+            border-color: #ffd700;
+            background-color: rgba(255, 215, 0, 0.05);
+        }
+        
+        .section-divider {
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+            margin: 1.5rem 0;
+        }
+    </style>
+</head>
+<body class="bg-black text-gray-100 min-h-screen">
+    <!-- Navbar -->
+    <nav class="bg-black border-b border-gray-900">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between items-center h-16">
+                <div class="flex-shrink-0 flex items-center gap-3">
+                    <a href="index.html" class="text-2xl font-bold gold-text tracking-tight">otoada.com</a>
+                    <span class="text-xs md:text-sm text-gray-400 italic font-light">Al sat fark yarat</span>
+                </div>
+                <a href="index.html" class="text-gray-300 hover:text-white transition-colors duration-200 font-medium">
+                    ← Ana Sayfaya Dön
+                </a>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <div class="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-12 pt-24">
+        <!-- Header -->
+        <div class="text-center mb-10">
+            <h1 class="text-4xl md:text-5xl font-bold text-white mb-3">Araç İlanı Ver</h1>
+            <p class="text-gray-400 text-lg">Aracınızı listelemek için aşağıdaki bilgileri doldurun</p>
+        </div>
+
+        <!-- Form -->
+        <form id="upload-form" class="space-y-6">
+            <!-- Temel Bilgiler Section -->
+            <div class="bg-gray-900 rounded-xl p-6 md:p-8 border border-gray-800">
+                <h2 class="text-2xl font-bold text-white mb-6 flex items-center gap-2">
+                    <span class="w-1 h-8 bg-yellow-500 rounded"></span>
+                    Temel Bilgiler
+                </h2>
+                
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div>
+                        <label class="block text-sm font-medium text-gray-400 mb-2">Marka *</label>
+                        <input 
+                            id="brand"
+                            type="text"
+                            list="car-brands"
+                            placeholder="örn: Mercedes, BMW, Audi"
+                            required
+                            class="w-full px-4 py-3 rounded-lg bg-gray-800 text-white placeholder-gray-500 border border-gray-700 form-input transition-all duration-200"
+                        >
+                        <datalist id="car-brands">
+                            <option value="Mercedes">Mercedes</option>
+                            <option value="BMW">BMW</option>
+                            <option value="Audi">Audi</option>
+                            <option value="Toyota">Toyota</option>
+                            <option value="Honda">Honda</option>
+                            <option value="Ford">Ford</option>
+                            <option value="Volkswagen">Volkswagen</option>
+                            <option value="Hyundai">Hyundai</option>
+                            <option value="Kia">Kia</option>
+                            <option value="Fiat">Fiat</option>
+                            <option value="Renault">Renault</option>
+                            <option value="Peugeot">Peugeot</option>
+                            <option value="Nissan">Nissan</option>
+                        </datalist>
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-400 mb-2">Model *</label>
+                        <input 
+                            id="model"
+                            type="text" 
+                            placeholder="örn: C-Class, 3 Series, A4" 
+                            required
+                            class="w-full px-4 py-3 rounded-lg bg-gray-800 text-white placeholder-gray-500 border border-gray-700 form-input transition-all duration-200"
+                        >
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-400 mb-2">Yıl *</label>
+                        <select 
+                            id="year"
+                            required
+                            class="w-full px-4 py-3 rounded-lg bg-gray-800 text-white border border-gray-700 form-input transition-all duration-200"
+                        >
+                            <option value="">Seçiniz...</option>
+                            <option value="2025">2025</option>
+                            <option value="2024">2024</option>
+                            <option value="2023">2023</option>
+                            <option value="2022">2022</option>
+                            <option value="2021">2021</option>
+                            <option value="2020">2020</option>
+                            <option value="2019">2019</option>
+                            <option value="2018">2018</option>
+                            <option value="2017">2017</option>
+                            <option value="2016">2016</option>
+                            <option value="2015">2015</option>
+                            <option value="2014">2014</option>
+                            <option value="2013">2013</option>
+                            <option value="2012">2012</option>
+                            <option value="2011">2011</option>
+                            <option value="2010">2010</option>
+                            <option value="2009">2009</option>
+                            <option value="2008">2008</option>
+                            <option value="2007">2007</option>
+                            <option value="2006">2006</option>
+                            <option value="2005">2005</option>
+                            <option value="2004">2004</option>
+                            <option value="2003">2003</option>
+                            <option value="2002">2002</option>
+                            <option value="2001">2001</option>
+                            <option value="2000">2000</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-400 mb-2">KM *</label>
+                        <input 
+                            id="km"
+                            type="number" 
+                            placeholder="örn: 45000" 
+                            min="0"
+                            required
+                            class="w-full px-4 py-3 rounded-lg bg-gray-800 text-white placeholder-gray-500 border border-gray-700 form-input transition-all duration-200"
+                        >
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-400 mb-2">Fiyat *</label>
+                        <div class="flex gap-3">
+                            <input 
+                                id="price"
+                                type="number" 
+                                placeholder="örn: 35000" 
+                                min="0"
+                                required
+                                class="flex-1 px-4 py-3 rounded-lg bg-gray-800 text-white placeholder-gray-500 border border-gray-700 form-input transition-all duration-200"
+                            >
+                            <select 
+                                id="currency-select"
+                                required
+                                class="w-24 px-4 py-3 rounded-lg bg-gray-800 text-white border border-gray-700 form-input transition-all duration-200"
+                            >
+                                <option value="STG" selected>STG</option>
+                                <option value="TL">TL</option>
+                                <option value="EUR">EUR</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-400 mb-2">Renk *</label>
+                        <input 
+                            type="text" 
+                            placeholder="örn: Siyah, Beyaz, Gri" 
+                            required
+                            class="w-full px-4 py-3 rounded-lg bg-gray-800 text-white placeholder-gray-500 border border-gray-700 form-input transition-all duration-200"
+                        >
+                    </div>
+                </div>
+            </div>
+
+            <!-- Detaylar Section -->
+            <div class="bg-gray-900 rounded-xl p-6 md:p-8 border border-gray-800">
+                <h2 class="text-2xl font-bold text-white mb-6 flex items-center gap-2">
+                    <span class="w-1 h-8 bg-yellow-500 rounded"></span>
+                    Detaylar
+                </h2>
+                
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                    <div>
+                        <label class="block text-sm font-medium text-gray-400 mb-2">Vites *</label>
+                        <select 
+                            id="vites"
+                            required
+                            class="w-full px-4 py-3 rounded-lg bg-gray-800 text-white border border-gray-700 form-input transition-all duration-200"
+                        >
+                            <option value="">Seçiniz...</option>
+                            <option value="Otomatik">Otomatik</option>
+                            <option value="Manuel">Manuel</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-400 mb-2">Yakıt *</label>
+                        <select 
+                            id="yakit"
+                            required
+                            class="w-full px-4 py-3 rounded-lg bg-gray-800 text-white border border-gray-700 form-input transition-all duration-200"
+                        >
+                            <option value="">Seçiniz...</option>
+                            <option value="Benzin">Benzin</option>
+                            <option value="Dizel">Dizel</option>
+                            <option value="Elektrik">Elektrik</option>
+                            <option value="Hibrit">Hibrit</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-400 mb-2">Kasa Tipi *</label>
+                        <select 
+                            required
+                            class="w-full px-4 py-3 rounded-lg bg-gray-800 text-white border border-gray-700 form-input transition-all duration-200"
+                        >
+                            <option value="">Seçiniz...</option>
+                            <option value="sedan">Sedan</option>
+                            <option value="hatchback">Hatchback</option>
+                            <option value="suv">SUV</option>
+                            <option value="coupe">Coupe</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="mt-6">
+                    <label class="block text-sm font-medium text-gray-400 mb-2">Açıklama *</label>
+                    <textarea 
+                        id="description"
+                        rows="5"
+                        placeholder="Aracınızı, durumunu, özelliklerini ve ek bilgileri açıklayın..."
+                        required
+                        class="w-full px-4 py-3 rounded-lg bg-gray-800 text-white placeholder-gray-500 border border-gray-700 form-input transition-all duration-200 resize-none"
+                    ></textarea>
+                </div>
+            </div>
+
+            <!-- Güven & Durum Section -->
+            <div class="bg-gray-900 rounded-xl p-6 md:p-8 border border-gray-800">
+                <h2 class="text-2xl font-bold text-white mb-6 flex items-center gap-2">
+                    <span class="w-1 h-8 bg-yellow-500 rounded"></span>
+                    Güven & Durum
+                </h2>
+                
+                <!-- Takas -->
+                <div class="mb-6">
+                    <label class="flex items-center cursor-pointer">
+                        <input type="checkbox" class="w-5 h-5 rounded bg-gray-800 border-gray-700 text-yellow-500 focus:ring-yellow-500">
+                        <span class="ml-3 text-gray-300 font-medium">Takasa Uygun</span>
+                    </label>
+                </div>
+
+                <div class="section-divider"></div>
+
+                <!-- Hasar Durumu (Ekspertiz) -->
+                <div>
+                    <label class="block text-sm font-medium text-gray-400 mb-4">Hasar Durumu (Ekspertiz) *</label>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <!-- Kaput -->
+                        <div class="bg-gray-800 rounded-lg p-4 border border-gray-700">
+                            <label class="block text-sm font-medium text-gray-300 mb-2">Kaput</label>
+                            <select class="w-full px-3 py-2 rounded-lg bg-gray-900 text-white border border-gray-700 form-input transition-all duration-200 text-sm">
+                                <option value="">Seçiniz...</option>
+                                <option value="orijinal">Orijinal</option>
+                                <option value="boyali">Boyalı</option>
+                                <option value="degisen">Değişen</option>
+                            </select>
+                        </div>
+                        
+                        <!-- Tavan -->
+                        <div class="bg-gray-800 rounded-lg p-4 border border-gray-700">
+                            <label class="block text-sm font-medium text-gray-300 mb-2">Tavan</label>
+                            <select class="w-full px-3 py-2 rounded-lg bg-gray-900 text-white border border-gray-700 form-input transition-all duration-200 text-sm">
+                                <option value="">Seçiniz...</option>
+                                <option value="orijinal">Orijinal</option>
+                                <option value="boyali">Boyalı</option>
+                                <option value="degisen">Değişen</option>
+                            </select>
+                        </div>
+                        
+                        <!-- Bagaj -->
+                        <div class="bg-gray-800 rounded-lg p-4 border border-gray-700">
+                            <label class="block text-sm font-medium text-gray-300 mb-2">Bagaj</label>
+                            <select class="w-full px-3 py-2 rounded-lg bg-gray-900 text-white border border-gray-700 form-input transition-all duration-200 text-sm">
+                                <option value="">Seçiniz...</option>
+                                <option value="orijinal">Orijinal</option>
+                                <option value="boyali">Boyalı</option>
+                                <option value="degisen">Değişen</option>
+                            </select>
+                        </div>
+                        
+                        <!-- Sağ Çamurluk -->
+                        <div class="bg-gray-800 rounded-lg p-4 border border-gray-700">
+                            <label class="block text-sm font-medium text-gray-300 mb-2">Sağ Çamurluk</label>
+                            <select class="w-full px-3 py-2 rounded-lg bg-gray-900 text-white border border-gray-700 form-input transition-all duration-200 text-sm">
+                                <option value="">Seçiniz...</option>
+                                <option value="orijinal">Orijinal</option>
+                                <option value="boyali">Boyalı</option>
+                                <option value="degisen">Değişen</option>
+                            </select>
+                        </div>
+                        
+                        <!-- Sol Çamurluk -->
+                        <div class="bg-gray-800 rounded-lg p-4 border border-gray-700">
+                            <label class="block text-sm font-medium text-gray-300 mb-2">Sol Çamurluk</label>
+                            <select class="w-full px-3 py-2 rounded-lg bg-gray-900 text-white border border-gray-700 form-input transition-all duration-200 text-sm">
+                                <option value="">Seçiniz...</option>
+                                <option value="orijinal">Orijinal</option>
+                                <option value="boyali">Boyalı</option>
+                                <option value="degisen">Değişen</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Medya Section -->
+            <div class="bg-gray-900 rounded-xl p-6 md:p-8 border border-gray-800">
+                <h2 class="text-2xl font-bold text-white mb-6 flex items-center gap-2">
+                    <span class="w-1 h-8 bg-yellow-500 rounded"></span>
+                    Medya
+                </h2>
+                
+                <!-- Image File Upload -->
+                <div class="mb-6">
+                    <label class="block text-sm font-medium text-gray-400 mb-2">Resim Yükle (Maksimum 7 adet)</label>
+                    <input 
+                        id="imageFile"
+                        type="file" 
+                        accept="image/*"
+                        multiple
+                        class="w-full px-4 py-3 rounded-lg bg-gray-800 text-white border border-gray-700 form-input transition-all duration-200 file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-sm file:font-semibold file:bg-yellow-500 file:text-black hover:file:bg-yellow-600 file:cursor-pointer"
+                    >
+                    <p class="text-xs text-gray-500 mt-2">Birden fazla resim seçebilirsiniz (JPG, PNG, GIF, vb.) - Maksimum 7 adet</p>
+                    <!-- Upload Status -->
+                    <div id="image-upload-status" class="mt-2 hidden">
+                        <p id="image-upload-text" class="text-sm"></p>
+                    </div>
+                    <!-- Image Preview Grid -->
+                    <div id="image-preview" class="mt-4 hidden">
+                        <div id="image-preview-grid" class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+                            <!-- Preview images will be inserted here -->
+                        </div>
+                    </div>
+                </div>
+
+                <div class="section-divider"></div>
+
+                <!-- Video Link -->
+                <div>
+                    <label class="block text-sm font-medium text-gray-400 mb-2">Video Linki</label>
+                    <input 
+                        type="url" 
+                        placeholder="YouTube veya Instagram video linki (opsiyonel)" 
+                        class="w-full px-4 py-3 rounded-lg bg-gray-800 text-white placeholder-gray-500 border border-gray-700 form-input transition-all duration-200"
+                    >
+                    <p class="text-xs text-gray-500 mt-2">YouTube veya Instagram video linkinizi buraya ekleyebilirsiniz</p>
+                </div>
+            </div>
+
+            <!-- Konum Section -->
+            <div class="bg-gray-900 rounded-xl p-6 md:p-8 border border-gray-800">
+                <h2 class="text-2xl font-bold text-white mb-6 flex items-center gap-2">
+                    <span class="w-1 h-8 bg-yellow-500 rounded"></span>
+                    Konum
+                </h2>
+                
+                <div>
+                    <label class="block text-sm font-medium text-gray-400 mb-2">Konum *</label>
+                    <select 
+                        id="konum"
+                        required
+                        class="w-full px-4 py-3 rounded-lg bg-gray-800 text-white border border-gray-700 form-input transition-all duration-200"
+                    >
+                        <option value="">Seçiniz...</option>
+                        <option value="Lefkoşa">Lefkoşa</option>
+                        <option value="Girne">Girne</option>
+                        <option value="Mağusa">Mağusa</option>
+                        <option value="Güzelyurt">Güzelyurt</option>
+                        <option value="İskele">İskele</option>
+                        <option value="Lefke">Lefke</option>
+                    </select>
+                </div>
+            </div>
+
+            <!-- İletişim Section -->
+            <div class="bg-gray-900 rounded-xl p-6 md:p-8 border border-gray-800">
+                <h2 class="text-2xl font-bold text-white mb-6 flex items-center gap-2">
+                    <span class="w-1 h-8 bg-yellow-500 rounded"></span>
+                    İletişim
+                </h2>
+                
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div>
+                        <label class="block text-sm font-medium text-gray-400 mb-2">Ad Soyad *</label>
+                        <input 
+                            id="seller-name"
+                            type="text" 
+                            placeholder="Adınız Soyadınız" 
+                            required
+                            class="w-full px-4 py-3 rounded-lg bg-gray-800 text-white placeholder-gray-500 border border-gray-700 form-input transition-all duration-200"
+                        >
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-400 mb-2">Telefon Numarası *</label>
+                        <input 
+                            id="seller-phone"
+                            type="tel" 
+                            placeholder="+90 5XX XXX XX XX" 
+                            required
+                            class="w-full px-4 py-3 rounded-lg bg-gray-800 text-white placeholder-gray-500 border border-gray-700 form-input transition-all duration-200"
+                        >
+                    </div>
+                </div>
+                <p class="text-xs text-gray-500 mt-3">Telefon numaranız ilanınızda görüntülenecektir</p>
+            </div>
+
+            <!-- Submit Button -->
+            <div class="flex justify-end space-x-4">
+                <button 
+                    type="button" 
+                    onclick="window.location.href='index.html'"
+                    class="px-8 py-3 rounded-lg font-medium border border-gray-700 text-gray-300 hover:bg-gray-800 transition-colors duration-200"
+                >
+                    İptal
+                </button>
+                <button 
+                    type="submit" 
+                    class="px-8 py-3 rounded-lg font-semibold bg-yellow-500 hover:bg-yellow-600 text-black transition-colors duration-200"
+                >
+                    İlanı Yayınla
+                </button>
+            </div>
+        </form>
+    </div>
+
+    <!-- Supabase Integration Scripts -->
+    <script src="config.js"></script>
+    <script src="upload.js"></script>
+</body>
+</html>
