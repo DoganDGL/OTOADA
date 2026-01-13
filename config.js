@@ -1,6 +1,12 @@
 // Supabase Configuration
-const SUPABASE_URL = 'https://dorxghvoyapmiiqbscun.supabase.co';
-const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImRvcnhnaHZveWFwbWlpcWJzY3VuIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjgxMzIzOTcsImV4cCI6MjA4MzcwODM5N30.buIFbdYCZPOi9T5LLAtwQnrJT2tvNcdy3K1MZbBo-JU';
+// Note: SUPABASE_URL and SUPABASE_ANON_KEY are loaded from secrets.js
+// Make sure secrets.js is loaded before this file in your HTML
+
+// Check if secrets are loaded
+if (typeof SUPABASE_URL === 'undefined' || typeof SUPABASE_ANON_KEY === 'undefined') {
+    console.error('ERROR: secrets.js must be loaded before config.js!');
+    console.error('Please ensure secrets.js is included in your HTML before config.js');
+}
 
 // Initialize Supabase client (globally accessible)
 // The global supabase object from CDN is available after the script loads in <head>
@@ -9,7 +15,12 @@ var supabase;
 try {
     // Access the global supabase object from the CDN and create client
     if (typeof window !== 'undefined' && window.supabase && typeof window.supabase.createClient === 'function') {
-        supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+        if (typeof SUPABASE_URL !== 'undefined' && typeof SUPABASE_ANON_KEY !== 'undefined') {
+            supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+        } else {
+            console.error('Supabase credentials not found. Please check secrets.js');
+            supabase = null;
+        }
     } else {
         console.warn('Supabase CDN not loaded. Client will be null.');
         supabase = null;
@@ -20,7 +31,7 @@ try {
 }
 
 // ImgBB Configuration
-// Fill in your ImgBB API Key (get one at https://api.imgbb.com/)
-const IMGBB_API_KEY = 'YOUR_API_KEY_HERE';
+// Note: IMGBB_API_KEY is loaded from secrets.js
+// Make sure secrets.js is loaded before this file in your HTML
 
 

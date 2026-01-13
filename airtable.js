@@ -145,8 +145,10 @@ function formatPrice(fiyat, paraBirimi) {
 
 async function fetchCarsFromAirtable() {
     // Check if API key and Base ID are configured
-    if (!AIRTABLE_API_KEY || !AIRTABLE_BASE_ID || AIRTABLE_API_KEY === '' || AIRTABLE_BASE_ID === '') {
-        console.warn('Airtable API Key or Base ID not configured. Please update config.js. Static car cards will be displayed.');
+    // Note: AIRTABLE_API_KEY and AIRTABLE_BASE_ID should be loaded from secrets.js
+    if (typeof AIRTABLE_API_KEY === 'undefined' || typeof AIRTABLE_BASE_ID === 'undefined' || 
+        !AIRTABLE_API_KEY || !AIRTABLE_BASE_ID || AIRTABLE_API_KEY === '' || AIRTABLE_BASE_ID === '') {
+        console.warn('Airtable API Key or Base ID not configured. Please update secrets.js. Static car cards will be displayed.');
         return; // Keep static cards if API is not configured
     }
 

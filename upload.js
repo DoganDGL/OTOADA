@@ -49,9 +49,14 @@ document.addEventListener('DOMContentLoaded', async function() {
     const imagePreview = document.getElementById('image-preview');
     const imagePreviewGrid = document.getElementById('image-preview-grid');
     
-    // --- KRİTİK AYAR: IMGBB API ANAHTARI BURADA ---
-    // Başka dosyalarla çakışmasın diye ismini özelleştirdik.
-    const myImgbbKey = '92f04d0a4a6d8bca493efe159e8f89ce'; 
+    // --- KRİTİK AYAR: IMGBB API ANAHTARI secrets.js'den yükleniyor ---
+    // secrets.js dosyasının yüklendiğinden emin olun
+    if (typeof IMGBB_API_KEY === 'undefined') {
+        alert('HATA: ImgBB API anahtarı bulunamadı. Lütfen secrets.js dosyasını kontrol edin.');
+        console.error('IMGBB_API_KEY is not defined. Make sure secrets.js is loaded before upload.js');
+        return;
+    }
+    const myImgbbKey = IMGBB_API_KEY; 
 
     if (!form) {
         console.error('HATA: Upload formu bulunamadı (HTML id="upload-form" olmalı)');
@@ -164,7 +169,7 @@ document.addEventListener('DOMContentLoaded', async function() {
                 const formData = new FormData();
                 formData.append('image', file);
 
-                // API Key'i buraya yerleştirdik (myImgbbKey)
+                // API Key'i secrets.js'den alıyoruz (myImgbbKey)
                 const response = await fetch(`https://api.imgbb.com/1/upload?key=${myImgbbKey}`, {
                     method: 'POST',
                     body: formData
