@@ -3,6 +3,7 @@
 
 // Seçilen dosyaları tutacak havuz
 let selectedImageFiles = [];
+let currentUserId = null;
 
 document.addEventListener('DOMContentLoaded', async function() {
     // Check authentication - only logged-in users can upload
@@ -33,6 +34,8 @@ document.addEventListener('DOMContentLoaded', async function() {
             window.location.href = 'login.html';
             return;
         }
+
+        currentUserId = session.user.id;
         
         // User is authenticated, continue with form setup
         
@@ -233,6 +236,10 @@ document.addEventListener('DOMContentLoaded', async function() {
                 yakit: yakit || null,
                 durum: 'Onay Bekliyor'
             };
+
+            if (currentUserId) {
+                carData.owner_id = currentUserId;
+            }
 
             // Insert car into Supabase
             const { data: carRecord, error: carError } = await supabase

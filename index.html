@@ -149,6 +149,7 @@
                         <span id="favorites-badge" class="absolute -top-2 -right-2 bg-red-500 text-white text-xs font-bold rounded-full w-5 h-5 flex items-center justify-center hidden">0</span>
                         <span class="hidden sm:inline">Favoriler</span>
                     </a>
+                    <a id="admin-nav-link" href="admin.html" class="hidden text-gray-300 hover:text-white transition-colors duration-200 font-medium">Yönetim Paneli</a>
                     <a href="login.html" class="text-gray-300 hover:text-white transition-colors duration-200 font-medium">Giriş Yap / Kayıt Ol</a>
                     <a href="upload.html" class="px-4 py-2 border-2 border-yellow-500 text-yellow-500 hover:bg-yellow-500 hover:text-black rounded-lg transition-colors duration-200 font-medium">İlan Ekle</a>
                 </div>
@@ -172,6 +173,7 @@
                     Favoriler
                     <span id="mobile-favorites-badge" class="bg-red-500 text-white text-xs font-bold rounded-full px-2 py-0.5 hidden">0</span>
                 </a>
+                <a id="mobile-admin-nav-link" href="admin.html" class="hidden text-gray-300 hover:text-white transition-colors duration-200 py-2 font-medium">Yönetim Paneli</a>
                 <a href="login.html" class="block text-gray-300 hover:text-white transition-colors duration-200 py-2 font-medium">Giriş Yap / Kayıt Ol</a>
                 <a href="upload.html" class="block px-4 py-2 border-2 border-yellow-500 text-yellow-500 hover:bg-yellow-500 hover:text-black rounded-lg transition-colors duration-200 font-medium text-center mt-2">İlan Ekle</a>
             </div>
@@ -986,6 +988,59 @@
     <!-- Load secrets.js FIRST before any other scripts that use secrets -->
     <script src="secrets.js"></script>
     <script src="config.js"></script>
+    <script>
+        async function maybeShowAdminLink() {
+            const desktopLink = document.getElementById('admin-nav-link');
+            const mobileLink = document.getElementById('mobile-admin-nav-link');
+
+            if (!desktopLink && !mobileLink) {
+                return;
+            }
+
+            if (!supabase) {
+                if (typeof window !== 'undefined' && window.supabase && typeof window.supabase.createClient === 'function') {
+                    if (typeof SUPABASE_URL !== 'undefined' && typeof SUPABASE_ANON_KEY !== 'undefined') {
+                        supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+                    }
+                }
+            }
+
+            if (!supabase) {
+                return;
+            }
+
+            try {
+                const { data: { session }, error } = await supabase.auth.getSession();
+
+                if (error || !session) {
+                    return;
+                }
+
+                const { data: profile, error: profileError } = await supabase
+                    .from('profiles')
+                    .select('role')
+                    .eq('id', session.user.id)
+                    .single();
+
+                if (profileError || !profile) {
+                    alert('Kullanıcı rolü doğrulanamadı. Lütfen tekrar giriş yapın.');
+                    return;
+                }
+
+                if (profile.role === 'admin') {
+                    desktopLink?.classList.remove('hidden');
+                    mobileLink?.classList.remove('hidden');
+                }
+            } catch (error) {
+                console.error('Admin role check failed:', error);
+                alert('Yönetim paneli bilgisi alınamadı. Lütfen tekrar deneyin.');
+            }
+        }
+
+        document.addEventListener('DOMContentLoaded', () => {
+            maybeShowAdminLink();
+        });
+    </script>
     <script src="supabaseData.js"></script>
 </body>
 </html>

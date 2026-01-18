@@ -1,4 +1,4 @@
-// Detail Page - Fetch and display single car record from Airtable
+// Detail Page - Fetch and display single car record from Supabase
 
 // Global variable to store current car data for story generation
 let currentCarData = null;
@@ -121,7 +121,7 @@ function transformSupabaseCarForDetail(car) {
         }));
     }
     
-    // Transform to match frontend expected format (PascalCase field names like Airtable)
+    // Transform to match frontend expected format (PascalCase field names)
     return {
         id: car.id,
         createdTime: car.created_at,
@@ -142,7 +142,7 @@ function transformSupabaseCarForDetail(car) {
             Telefon: car.telefon || '',
             Konum: car.konum || '',
             Ekspertiz: car.ekspertiz || '',
-            // Images array in Airtable format
+            // Images array format for UI rendering
             Resim: images
         }
     };
@@ -250,7 +250,7 @@ function updateImages(resim) {
     const mainImagePlaceholder = document.getElementById('main-image-placeholder');
     const thumbnailsContainer = document.querySelector('.grid.grid-cols-4.gap-3');
 
-    // Get image URLs from Airtable attachment field
+    // Get image URLs from stored image array
     let imageUrls = [];
     if (Array.isArray(resim) && resim.length > 0) {
         imageUrls = resim.map(img => img.url || img.thumbnails?.large?.url || '').filter(url => url);

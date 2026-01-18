@@ -49,7 +49,7 @@ function transformSupabaseCarForAdmin(car) {
         imageUrl = sortedImages[0].image_url || sortedImages[0].thumbnail_url || '';
     }
     
-    // Transform to match frontend expected format (PascalCase field names like Airtable)
+    // Transform to match frontend expected format (PascalCase field names)
     return {
         id: car.id,
         createdTime: car.created_at,
@@ -70,7 +70,7 @@ function transformSupabaseCarForAdmin(car) {
             Telefon: car.telefon || '',
             Konum: car.konum || '',
             Ekspertiz: car.ekspertiz || '',
-            // For images, create array format similar to Airtable
+            // For images, create array format compatible with existing UI
             Resim: imageUrl ? [{ url: imageUrl }] : []
         }
     };

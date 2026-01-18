@@ -1,6 +1,6 @@
 // Favorites Page - Display favorite cars from localStorage
 
-// Favorites localStorage functions (same as airtable.js)
+// Favorites localStorage functions
 function getFavorites() {
     try {
         const favorites = localStorage.getItem('otoada_favorites');
@@ -86,7 +86,35 @@ function updateFavoritesBadge() {
     }
 }
 
-// Fetch favorite cars from Airtable
+// Utility function to format price with currency
+function formatPrice(fiyat, paraBirimi) {
+    let symbol = '£';
+    
+    if (paraBirimi === 'TL' || paraBirimi === 'tl') {
+        symbol = '₺';
+    } else if (paraBirimi === 'EUR' || paraBirimi === 'eur') {
+        symbol = '€';
+    } else if (paraBirimi === 'STG' || paraBirimi === 'stg') {
+        symbol = '£';
+    }
+    
+    let formattedNumber = '';
+    if (typeof fiyat === 'number') {
+        formattedNumber = fiyat.toLocaleString('en-US');
+    } else if (fiyat) {
+        const numValue = parseInt(fiyat);
+        if (!isNaN(numValue)) {
+            formattedNumber = numValue.toLocaleString('en-US');
+        } else {
+            formattedNumber = fiyat.toString();
+        }
+    } else {
+        formattedNumber = '0';
+    }
+    
+    return `${symbol}${formattedNumber}`;
+}
+
 // Helper function to transform Supabase data to match frontend format
 function transformSupabaseCarForFavorites(car) {
     // Get first image from car_images relationship
@@ -96,7 +124,7 @@ function transformSupabaseCarForFavorites(car) {
         imageUrl = sortedImages[0].image_url || sortedImages[0].thumbnail_url || '';
     }
     
-    // Transform to match frontend expected format (PascalCase field names like Airtable)
+    // Transform to match frontend expected format (PascalCase field names)
     return {
         id: car.id,
         createdTime: car.created_at,
@@ -117,7 +145,7 @@ function transformSupabaseCarForFavorites(car) {
             Telefon: car.telefon || '',
             Konum: car.konum || '',
             Ekspertiz: car.ekspertiz || '',
-            // For images, create array format similar to Airtable
+            // For images, create array format compatible with existing UI
             Resim: imageUrl ? [{ url: imageUrl }] : []
         }
     };
@@ -216,6 +244,7 @@ function createCarCardHTML(record) {
     const marka = fields.Marka || fields.marka || '';
     const model = fields.Model || fields.model || '';
     const fiyat = fields.Fiyat || fields.fiyat || 0;
+    const paraBirimi = fields.ParaBirimi || fields.paraBirimi || 'STG';
     const yil = fields.Yil || fields.yil || fields.Yıl || fields.yıl || '';
     const km = fields.KM || fields.km || fields.Kilometre || fields.kilometre || '';
     const resim = fields.Resim || fields.resim || fields.Image || fields.image || '';
@@ -232,7 +261,7 @@ function createCarCardHTML(record) {
         imageUrl = resim;
     }
 
-    const formattedPrice = typeof fiyat === 'number' ? `£${fiyat.toLocaleString()}` : `£${fiyat}`;
+    const formattedPrice = formatPrice(fiyat, paraBirimi);
     const formattedKM = km ? `${km.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',')} KM` : '';
 
     // Build specs line
