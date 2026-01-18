@@ -2,6 +2,44 @@
 // Manages car listings from Supabase with sidebar filtering
 // Uses Supabase Auth for authentication
 
+// Strict admin auth guard (runs immediately)
+async function checkAuth() {
+    if (!supabase) {
+        console.error('Supabase client not initialized');
+        window.location.href = 'login.html';
+        return false;
+    }
+
+    try {
+        const { data: { session }, error } = await supabase.auth.getSession();
+
+        if (error || !session) {
+            window.location.href = 'login.html';
+            return false;
+        }
+
+        const { data: profile, error: profileError } = await supabase
+            .from('profiles')
+            .select('role')
+            .eq('id', session.user.id)
+            .single();
+
+        if (profileError || !profile || profile.role !== 'admin') {
+            alert('Access Denied: Admins Only');
+            window.location.href = 'index.html';
+            return false;
+        }
+
+        return true;
+    } catch (error) {
+        console.error('Error checking authentication:', error);
+        window.location.href = 'login.html';
+        return false;
+    }
+}
+
+const authCheckPromise = checkAuth();
+
 // Helper function to transform Supabase data to match frontend format
 function transformSupabaseCarForAdmin(car) {
     // Get first image from car_images relationship
@@ -46,37 +84,16 @@ let allUsers = []; // Store all fetched users
 let isUsersTabActive = false; // Track if users tab is active
 let currentUserFilter = 'all'; // Current user filter: 'all' or 'ambassador'
 
-// Check if user is logged in on page load
+// Check if user is admin on page load
 document.addEventListener('DOMContentLoaded', async function() {
-    // Check Supabase Auth session
-    if (!supabase) {
-        console.error('Supabase client not initialized');
-        showLogin();
+    const isAdmin = await authCheckPromise;
+    if (!isAdmin) {
         return;
     }
-    
-    try {
-        const { data: { session }, error } = await supabase.auth.getSession();
-        
-        if (error) {
-            console.error('Error checking session:', error);
-            showLogin();
-            return;
-        }
-        
-        if (session) {
-            // User is logged in
-            showDashboard();
-        } else {
-            // No session, show login screen
-            showLogin();
-        }
-    } catch (error) {
-        console.error('Error checking authentication:', error);
-        showLogin();
-    }
-    
-    // Setup login form
+
+    showDashboard();
+
+    // Setup login form (kept for legacy fallback)
     const loginForm = document.getElementById('login-form');
     if (loginForm) {
         loginForm.addEventListener('submit', handleLogin);
